@@ -15,8 +15,11 @@ const userSceama = mongoose.Schema(
       type: String,
       required: true,
     },
+    image: {
+      type: String,
+    },
   },
-  { timstamps: true }
+  { timestamps: true }
 );
 userSceama.pre("save", async function (next) {
   if (!this.isModified("password")) {

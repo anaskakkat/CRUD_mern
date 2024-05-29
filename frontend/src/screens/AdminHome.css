@@ -1,0 +1,77 @@
+.table-responsive {
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+.badge-success {
+    background-color: #28a745;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+}
+
+.table .thead-dark th {
+    background-color: #343a40;
+    color: white;
+}
+.table-responsive {
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+.badge-success {
+    background-color: #28a745;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+}
+
+.table .thead-dark th {
+    background-color: #343a40;
+    color: white;
+}
+
+
+/* UserManagement.css */
+.custom-button {
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.375rem 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.custom-button .text-primary {
+    color: #007bff;
+}
+
+.custom-button .text-danger {
+    color: #dc3545;
+}
+
+.custom-button:hover {
+    border-color: #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.custom-button.text-danger:hover {
+    border-color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.1);
+}
