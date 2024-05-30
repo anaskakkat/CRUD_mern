@@ -1,10 +1,15 @@
 import React from "react";
 import Hero from "../components/Hero";
+import Header from "../components/header";
+import { Container } from "react-bootstrap";
 
 const HomeScreen = () => {
   return (
     <>
-      <Hero />
+      <Header />
+      <Container>
+        <Hero />
+      </Container>
     </>
   );
 };

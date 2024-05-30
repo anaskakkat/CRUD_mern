@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCredentials } from "../slices/AuthSlices";
 import { toast } from "react-toastify";
 import { validateSignUpForm } from "../utils/validation";
+import Header from "../components/header";
 
 const RegisterScreen = () => {
   const [name, setName] = useState("");
@@ -14,14 +15,19 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [image, setImage] = useState(null);
-console.log('image:::>',image);
+  console.log("image:::>", image);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    const validForm = validateSignUpForm(name, email, password, confirmPassword);
+    const validForm = validateSignUpForm(
+      name,
+      email,
+      password,
+      confirmPassword
+    );
 
     if (validForm) {
       if (password !== confirmPassword) {
@@ -36,7 +42,7 @@ console.log('image:::>',image);
         const formData = new FormData();
         formData.append("file", image);
         formData.append("upload_preset", "xyou11gc");
-        console.log('formdata::',formData);
+        console.log("formdata::", formData);
 
         try {
           const response = await axios.post(
@@ -57,7 +63,7 @@ console.log('image:::>',image);
           name,
           email,
           password,
-          image: imageUrl, 
+          image: imageUrl,
         });
         // console.log("data::", data);
         dispatch(setCredentials(data));
@@ -71,69 +77,72 @@ console.log('image:::>',image);
   };
 
   return (
-    <FormContainer>
-      <h1>Register</h1>
-      <Form onSubmit={submitHandler}>
-        <Form.Group className="my-2" controlId="name">
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
+    <>
+      <Header />
+      <FormContainer>
+        <h1>Register</h1>
+        <Form onSubmit={submitHandler}>
+          <Form.Group className="my-2" controlId="name">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            ></Form.Control>
+          </Form.Group>
 
-        <Form.Group className="my-2" controlId="email">
-          <Form.Label>Email Address</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Enter email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
+          <Form.Group className="my-2" controlId="email">
+            <Form.Label>Email Address</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="Enter email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            ></Form.Control>
+          </Form.Group>
 
-        <Form.Group className="my-2" controlId="password">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
+          <Form.Group className="my-2" controlId="password">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            ></Form.Control>
+          </Form.Group>
 
-        <Form.Group className="my-2" controlId="confirmPassword">
-          <Form.Label>Confirm Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Confirm password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          ></Form.Control>
-        </Form.Group>
+          <Form.Group className="my-2" controlId="confirmPassword">
+            <Form.Label>Confirm Password</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Confirm password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            ></Form.Control>
+          </Form.Group>
 
-        <Form.Group className="my-2" controlId="image">
-          <Form.Label>Profile Image</Form.Label>
-          <Form.Control
-            type="file"
-            accept=".png, .jpg, .jpeg, .gif"
-            onChange={(e) => setImage(e.target.files[0])}
-          ></Form.Control>
-        </Form.Group>
+          <Form.Group className="my-2" controlId="image">
+            <Form.Label>Profile Image</Form.Label>
+            <Form.Control
+              type="file"
+              accept=".png, .jpg, .jpeg, .gif"
+              onChange={(e) => setImage(e.target.files[0])}
+            ></Form.Control>
+          </Form.Group>
 
-        <Button type="submit" variant="primary" className="mt-3">
-          Register
-        </Button>
-      </Form>
+          <Button type="submit" variant="primary" className="mt-3">
+            Register
+          </Button>
+        </Form>
 
-      <Row className="py-3">
-        <Col>
-          Already have an account? <Link to="/login">Login</Link>
-        </Col>
-      </Row>
-    </FormContainer>
+        <Row className="py-3">
+          <Col>
+            Already have an account? <Link to="/login">Login</Link>
+          </Col>
+        </Row>
+      </FormContainer>
+    </>
   );
 };
 

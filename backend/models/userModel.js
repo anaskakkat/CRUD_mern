@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 const userSceama = mongoose.Schema(
   {
+    isAdmin: {
+      type: Boolean,
+      default: false, 
+    },
     name: {
       type: String,
       required: true,

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import FormContainer from "../components/FormContainer";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,8 +8,12 @@ import { setCredentials } from "../slices/AuthSlices";
 import { toast } from "react-toastify";
 import { validateSignUpForm } from "../utils/validation";
 import image from "../assets/def_icon_profile.jpg";
-import Header from "../components/header";
-const ProfileScreen = () => {
+import AdminHeader from "./AdminHeader";
+
+const AdminEditProfile = () => {
+  let { userId } = useParams();
+  //   console.log("userId:", userId);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,28 +21,39 @@ const ProfileScreen = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.auth);
-  const fileInputRef = useRef(null);
+  
   const [profilePicture, setProfilePicture] = useState("");
-  console.log("profilePicture:::>", profilePicture);
-  console.log("user.img", userInfo.image);
+  const fileInputRef = useRef(profilePicture);
+  //   console.log("profilePicture:::>", profilePicture);
+  //   console.log("user.img", userInfo.image);
   useEffect(() => {
-    if (userInfo) {
-      setName(userInfo.name);
-      setEmail(userInfo.email);
-      setProfilePicture(userInfo.image);
-    }
-  }, [userInfo]);
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/admin/userData/${userId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+        const userData = response.data;
+        setName(userData.name);
+        setEmail(userData.email);
+        setProfilePicture(userData.image);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        toast.error("Error fetching user data");
+      }
+    };
+
+    fetchUserData();
+  }, [userId]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    const validForm = validateSignUpForm(
-      name,
-      email,
-      password,
-      confirmPassword
-    );
+    const validForm = validateSignUpForm(name, email);
     if (!validForm) {
       toast.error("Invalid form data");
       return;
@@ -49,42 +64,24 @@ const ProfileScreen = () => {
     }
 
     setLoading(true);
-    // Declare imageUrl outside the try block
-    let imageUrl = "";
 
-    // Upload image to Cloudinary
-    if (profilePicture) {
-      const formData = new FormData();
-      formData.append("file", fileInputRef.current.files[0]);
-      formData.append("upload_preset", "xyou11gc");
-      // console.log('formdata::',formData);
-      try {
-        const response = await axios.post(
-          `https://api.cloudinary.com/v1_1/dvq7oswim/image/upload`,
-          formData
-        );
-        imageUrl = response.data.secure_url;
-        console.log("Uploaded image URL:", imageUrl);
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        toast.error("Error uploading image");
-        return;
-      }
-    }
     try {
-      const { data } = await axios.put(
-        "http://localhost:5000/api/users/profile",
-        { name, email, password, imageUrl },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-      console.log("upadted data::", data);
-      dispatch(setCredentials(data));
-      navigate("/");
+      await axios
+        .put(
+          `http://localhost:5000/api/admin/profileUpdate`,
+          { userId, name, email },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          console.log("upadted data::", res.data);
+        })
+        .catch((err) => console.log(err));
+      navigate("/adminDashboard");
       toast.success("Profile updated successfully");
     } catch (err) {
       const message = err.response?.data?.message || "An error occurred";
@@ -93,9 +90,9 @@ const ProfileScreen = () => {
       setLoading(false);
     }
   };
-  const handleProfilePictureClick = () => {
-    fileInputRef.current.click();
-  };
+//   const handleProfilePictureClick = () => {
+//     fileInputRef.current.click();
+//   };
   const handleProfilePic = (e) => {
     // console.log(e.target.files[0]);
     const file = e.target.files[0];
@@ -103,7 +100,7 @@ const ProfileScreen = () => {
   };
   return (
     <>
-      <Header />
+      <AdminHeader />
       <FormContainer>
         <h1 className="mb-3 d-flex justify-content-center mb-5">Profile</h1>
         <Form onSubmit={submitHandler}>
@@ -121,13 +118,13 @@ const ProfileScreen = () => {
                   }}
                 />
               </div>
-              <p
+              {/* <p
                 style={{ fontSize: "12px", cursor: "pointer" }}
                 className="mt-1 d-flex justify-content-center text-primary"
                 onClick={handleProfilePictureClick}
               >
                 Change profile picture
-              </p>
+              </p> */}
               <input
                 type="file"
                 ref={fileInputRef}
@@ -156,7 +153,7 @@ const ProfileScreen = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Group>
-
+          {/* 
           <Form.Group className="my-2" controlId="password">
             <Form.Label>Password</Form.Label>
             <Form.Control
@@ -175,7 +172,7 @@ const ProfileScreen = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
-          </Form.Group>
+          </Form.Group> */}
 
           <Button
             type="submit"
@@ -191,4 +188,4 @@ const ProfileScreen = () => {
   );
 };
 
-export default ProfileScreen;
+export default AdminEditProfile;

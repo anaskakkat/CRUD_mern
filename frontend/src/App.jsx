@@ -1,22 +1,21 @@
-import { useEffect, useState } from "react";
 import "./App.css";
-import axios from "axios";
 import Header from "./components/header";
-import HomeScreen from "./screens/HomeScreen";
+import AdminHeader from "./components/AdminHeader";
 import { Container } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-function App() {
 
-  
+function App() {
+  const { userInfo } = useSelector((state) => state.auth);
+  const isAdmin = userInfo && userInfo.isAdmin;
+  console.log(isAdmin, 5);
+
   return (
     <>
-      <Header />
       <ToastContainer />
-      <Container className="my-2">
-        <Outlet />
-      </Container>
+      <Outlet />
     </>
   );
 }
