@@ -44,7 +44,7 @@ const LoginScreen = () => {
       // console.log("data::;", data);
       dispatch(setCredentials(data));
       console.log("user logined");
-      navigate("/");
+      navigate("/home");
     } catch (err) {
       const message =
         err.response?.data?.message || "Invalid email or password";

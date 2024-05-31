@@ -5,7 +5,6 @@ const store = configureStore({
   reducer: {
     auth: AuthSlices,
     adminLogin: AdminSlice,
-
   },
   devTools: true,
 });

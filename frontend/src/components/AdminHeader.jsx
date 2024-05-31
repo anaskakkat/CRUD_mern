@@ -13,7 +13,7 @@ const AdminHeader = () => {
 
   const logoutHandler = () => {
     axios
-      .post("http://localhost:5000/api/admin/adminLogout", {
+      .post("http://localhost:5000/api/admin/adminLogout",{}, {
         AdminHeaders: {
           "Content-Type": "application/json",
         },
@@ -22,7 +22,7 @@ const AdminHeader = () => {
       .then((res) => console.log(res.data))
       .catch((err) => console.error(err));
     dispatch(adminLogout());
-    navigate("/login");
+    navigate("/adminLogin");
   };
 
   return (

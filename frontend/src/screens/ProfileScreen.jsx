@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { validateSignUpForm } from "../utils/validation";
 import image from "../assets/def_icon_profile.jpg";
 import Header from "../components/header";
+
 const ProfileScreen = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -20,14 +21,12 @@ const ProfileScreen = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
   const fileInputRef = useRef(null);
-  const [profilePicture, setProfilePicture] = useState("");
-  console.log("profilePicture:::>", profilePicture);
-  console.log("user.img", userInfo.image);
+  const [profilePicture, setProfilePicture] = useState(null);
+
   useEffect(() => {
     if (userInfo) {
       setName(userInfo.name);
       setEmail(userInfo.email);
-      setProfilePicture(userInfo.image);
     }
   }, [userInfo]);
 
@@ -49,32 +48,32 @@ const ProfileScreen = () => {
     }
 
     setLoading(true);
-    // Declare imageUrl outside the try block
-    let imageUrl = "";
+    let imageUrl = userInfo.image; // Default to current image if no new image is uploaded
+    const imageFile = fileInputRef.current.files[0];
 
-    // Upload image to Cloudinary
-    if (profilePicture) {
+    if (imageFile) {
       const formData = new FormData();
-      formData.append("file", fileInputRef.current.files[0]);
+      formData.append("file", imageFile);
       formData.append("upload_preset", "xyou11gc");
-      // console.log('formdata::',formData);
+
       try {
         const response = await axios.post(
           `https://api.cloudinary.com/v1_1/dvq7oswim/image/upload`,
           formData
         );
         imageUrl = response.data.secure_url;
-        console.log("Uploaded image URL:", imageUrl);
       } catch (error) {
         console.error("Error uploading image:", error);
         toast.error("Error uploading image");
+        setLoading(false);
         return;
       }
     }
+
     try {
       const { data } = await axios.put(
         "http://localhost:5000/api/users/profile",
-        { name, email, password, imageUrl },
+        { name, email, password, image: imageUrl,userInfo },
         {
           headers: {
             "Content-Type": "application/json",
@@ -82,9 +81,9 @@ const ProfileScreen = () => {
           withCredentials: true,
         }
       );
-      console.log("upadted data::", data);
+
       dispatch(setCredentials(data));
-      navigate("/");
+      navigate("/home");
       toast.success("Profile updated successfully");
     } catch (err) {
       const message = err.response?.data?.message || "An error occurred";
@@ -93,14 +92,16 @@ const ProfileScreen = () => {
       setLoading(false);
     }
   };
+
   const handleProfilePictureClick = () => {
     fileInputRef.current.click();
   };
+
   const handleProfilePic = (e) => {
-    // console.log(e.target.files[0]);
     const file = e.target.files[0];
     setProfilePicture(URL.createObjectURL(file));
   };
+
   return (
     <>
       <Header />
@@ -111,7 +112,7 @@ const ProfileScreen = () => {
             <>
               <div className=" d-flex justify-content-center">
                 <img
-                  src={profilePicture}
+                  src={profilePicture ? profilePicture : userInfo.image}
                   alt="Profile"
                   className="img-thumbnail rounded-circle"
                   style={{

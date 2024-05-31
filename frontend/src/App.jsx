@@ -10,7 +10,6 @@ import "react-toastify/dist/ReactToastify.css";
 function App() {
   const { userInfo } = useSelector((state) => state.auth);
   const isAdmin = userInfo && userInfo.isAdmin;
-  console.log(isAdmin, 5);
 
   return (
     <>

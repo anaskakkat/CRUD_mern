@@ -13,7 +13,7 @@ const Header = () => {
 
   const logoutHandler = () => {
     axios
-      .post("http://localhost:5000/api/users/logout", {
+      .post("http://localhost:5000/api/users/logout",{}, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -22,14 +22,14 @@ const Header = () => {
       .then((res) => console.log(res.data))
       .catch((err) => console.error(err));
     dispatch(logout());
-    navigate("/login");
+    navigate("/");
   };
 
   return (
     <header>
       <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
         <Container>
-          <LinkContainer to="/">
+          <LinkContainer to="/home">
             <Navbar.Brand>MERN App</Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -53,7 +53,7 @@ const Header = () => {
                 </>
               ) : (
                 <>
-                  <LinkContainer to="/login">
+                  <LinkContainer to="/">
                     <Nav.Link>
                       <FaSignInAlt /> Sign In
                     </Nav.Link>

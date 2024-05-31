@@ -21,7 +21,7 @@ const AdminEditProfile = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  
+
   const [profilePicture, setProfilePicture] = useState("");
   const fileInputRef = useRef(profilePicture);
   //   console.log("profilePicture:::>", profilePicture);
@@ -38,6 +38,7 @@ const AdminEditProfile = () => {
             withCredentials: true,
           }
         );
+
         const userData = response.data;
         setName(userData.name);
         setEmail(userData.email);
@@ -62,7 +63,16 @@ const AdminEditProfile = () => {
       toast.error("Passwords do not match");
       return;
     }
+    if (name.length < 2) {
+      // console.log("length",newUser.name.length);
 
+      toast.error("Pleae enter propper name");
+      return;
+    }
+    if (!/^[A-Za-z]+(?:[-' ][A-Za-z]+)*$/.test(name)) {
+      toast.error("Pleae enter propper name");
+      return;
+    }
     setLoading(true);
 
     try {
@@ -78,7 +88,7 @@ const AdminEditProfile = () => {
           }
         )
         .then((res) => {
-          console.log("upadted data::", res.data);
+          // console.log("upadted data::", res.data);
         })
         .catch((err) => console.log(err));
       navigate("/adminDashboard");
@@ -90,9 +100,9 @@ const AdminEditProfile = () => {
       setLoading(false);
     }
   };
-//   const handleProfilePictureClick = () => {
-//     fileInputRef.current.click();
-//   };
+  //   const handleProfilePictureClick = () => {
+  //     fileInputRef.current.click();
+  //   };
   const handleProfilePic = (e) => {
     // console.log(e.target.files[0]);
     const file = e.target.files[0];

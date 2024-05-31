@@ -9,7 +9,7 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
   if (user && !user.isAdmin && (await user.matchPasswords(password))) {
     generateToken(res, user._id);
-    res.status(201).json({ _id: user._id, name: user.name, email: user.email });
+    res.status(201).json({ _id: user._id, name: user.name, email: user.email,image:user.image });
   } else {
     res.status(401);
     throw new Error("invalid user data");
@@ -18,12 +18,12 @@ const authUser = asyncHandler(async (req, res) => {
 
 //register new  user---------------------------------------------------------------------------------------------------------------------
 const registerUser = asyncHandler(async (req, res) => {
-  console.log("body::", req.body);
+  // console.log("body::", req.body);
   const { name, email, password, image } = req.body;
   const userExists = await User.findOne({ email });
   if (userExists) {
-    res.status(400);
-    throw new Error("user already exists");
+    console.error("user already exists");
+    return res.status(400).json({ message: "User already exists" });
   }
   const user = await User.create({
     name,
@@ -31,6 +31,7 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
     image,
   });
+  // console.log('user:',user);
   if (user) {
     generateToken(res, user._id);
     res.status(201).json({
@@ -43,8 +44,6 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("invalid user data");
   }
-
-  res.status(200).json({ message: "resgister user" });
 });
 
 //logout---------------------------------------------------------------------------------------------------------------------
@@ -55,7 +54,8 @@ const logoutUser = asyncHandler(async (req, res) => {
     sameSite: "strict",
     expires: new Date(0),
   });
-  res.status(200).json({ message: "User logged out successfully" });
+
+  res.json({ message: "cookie cleared" });
 });
 
 //get user profile---------------------------------------------------------------------------------------------------------------------
@@ -73,8 +73,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
 //update user profile---------------------------------------------------------------------------------------------------------------------
 
 const updateUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
-  console.log("body::", req.body);
+  // console.log(req.body)
+  const user = await User.findById(req.body.userInfo._id);
   if (user) {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
@@ -92,7 +92,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(404);
-    throw new Error(" user not found");
+    throw new Error("User not found");
   }
 });
 

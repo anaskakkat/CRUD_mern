@@ -6,6 +6,7 @@ import AdminHeader from "./AdminHeader";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -38,7 +39,7 @@ const AdminDashboard = () => {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setUsers(res.data);
       })
       .catch((err) => console.error(err));
@@ -53,7 +54,7 @@ const AdminDashboard = () => {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         // Remove the deleted user from the users array
         setUsers(users.filter((user) => user._id !== userId));
       })
@@ -106,13 +107,24 @@ const AdminDashboard = () => {
           formData
         );
         imageUrl = response.data.secure_url;
-        console.log("Uploaded image URL:", imageUrl);
+        // console.log("Uploaded image URL:", imageUrl);
       } catch (error) {
         console.error("Error uploading image:", error);
         return;
       }
     }
 
+    if (newUser.name.length < 2) {
+      // console.log("length",newUser.name.length);
+
+      toast.error("Pleae enter propper name");
+      return;
+    }
+    if (!/^[A-Za-z]+(?:[-' ][A-Za-z]+)*$/.test(newUser.name)) {
+      toast.error("Pleae enter propper name");
+      return;
+    }
+    // console.log(newUser.name);
     const userData = {
       name: newUser.name,
       email: newUser.email,
@@ -128,7 +140,7 @@ const AdminDashboard = () => {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setUsers([...users, res.data]);
         setShowAddUserModal(false);
         setNewUser({ name: "", email: "", password: "", profilePic: null });
@@ -136,6 +148,11 @@ const AdminDashboard = () => {
       })
       .catch((err) => console.error(err));
   };
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
@@ -154,7 +171,6 @@ const AdminDashboard = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Button variant="outline-success">Search</Button>
           </Form>
         </div>
         <Table striped bordered hover responsive className="shadow-sm">
@@ -167,25 +183,24 @@ const AdminDashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user, index) => (
+            {filteredUsers.map((user, index) => (
               <tr key={user._id}>
                 <td>{index + 1}</td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td className="d-flex justify-content-center">
                   <Link to={`/adminEditProfile/${user._id}`}>
-                    <Button variant="" className="custom-button mx-2 ">
+                    <Button variant="" className="custom-button mx-2">
                       <FaEdit className="text-primary" />
-                      Profile {/* Edit Icon */}
+                      Profile
                     </Button>
                   </Link>
-
                   <Button
                     variant=""
                     className="custom-button text-danger"
                     onClick={() => handleDeleteClick(user._id)}
                   >
-                    <FaTrash /> {/* Delete Icon */}
+                    <FaTrash />
                   </Button>
                 </td>
               </tr>

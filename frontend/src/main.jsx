@@ -24,12 +24,9 @@ import AdminEditProfile from "./components/AdminEditProfile.jsx";
 // const router = createBrowserRouter([
 //   {
 //     path: "/",
-//     element: <HomeScreen />,
+//     element:<LoginScreen />,
 //   },
-//   {
-//     path: "/login",
-//     element: <LoginScreen />,
-//   },
+
 //   {
 //     path: "/register",
 //     element: <RegisterScreen />,
@@ -55,12 +52,16 @@ import AdminEditProfile from "./components/AdminEditProfile.jsx";
 //     element: <AdminLogin />,
 //   },
 //   {
-//     path: "/admin",
+//     path: "",
 //     element: <AdminRoute />,
 //     children: [
 //       {
 //         path: "/adminDashboard",
 //         element:<AdminHome />,
+//       },
+//       {
+//         path: "/adminEditProfile/:userId",
+//         element:<AdminEditProfile />,
 //       },
 //     ],
 //   },
@@ -69,21 +70,22 @@ import AdminEditProfile from "./components/AdminEditProfile.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      <Route path="/" element={<HomeScreen />}></Route>
-      <Route path="/login" element={<LoginScreen />}></Route>
+      <Route path="/" element={<LoginScreen />}></Route>
       <Route path="/register" element={<RegisterScreen />}></Route>
       <Route path="" element={<PrivateRoute />}>
+        <Route path="/home" element={<HomeScreen />}></Route>
+
         <Route path="/profile" element={<ProfileScreen />} />
       </Route>
       <Route path="/adminLogin" element={<AdminLogin />}></Route>
 
       <Route path="" element={<AdminRoute />}>
         <Route path="/adminDashboard" element={<AdminHome />}></Route>
+        <Route
+          path="/adminEditProfile/:userId"
+          element={<AdminEditProfile />}
+        ></Route>
       </Route>
-      <Route
-        path="/adminEditProfile/:userId"
-        element={<AdminEditProfile />}
-      ></Route>
     </Route>
   )
 );

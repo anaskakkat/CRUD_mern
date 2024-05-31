@@ -15,23 +15,32 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [image, setImage] = useState(null);
-  console.log("image:::>", image);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(false);
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     const validForm = validateSignUpForm(
       name,
       email,
       password,
       confirmPassword
     );
-
+    if(validForm){
+      toast.error(validForm)
+    }
+    if (name.length>2) {
+      toast.error("Pleae enter propper name");
+      return;
+    }
     if (validForm) {
       if (password !== confirmPassword) {
         toast.error("Passwords do not match");
+        setLoading(false); // Set loading to false if validation fails
         return;
       }
 
@@ -42,7 +51,6 @@ const RegisterScreen = () => {
         const formData = new FormData();
         formData.append("file", image);
         formData.append("upload_preset", "xyou11gc");
-        console.log("formdata::", formData);
 
         try {
           const response = await axios.post(
@@ -50,10 +58,10 @@ const RegisterScreen = () => {
             formData
           );
           imageUrl = response.data.secure_url;
-          console.log("Uploaded image URL:", imageUrl);
         } catch (error) {
           console.error("Error uploading image:", error);
           toast.error("Error uploading image");
+          setLoading(false); // Set loading to false if image upload fails
           return;
         }
       }
@@ -65,14 +73,22 @@ const RegisterScreen = () => {
           password,
           image: imageUrl,
         });
-        // console.log("data::", data);
+        // console.log('data:',data)
         dispatch(setCredentials(data));
         navigate("/");
         toast.success("Registration successful");
       } catch (err) {
         const message = err.response?.data?.message || "An error occurred";
-        toast.error(message);
+        if (message === "User already exists") {
+          toast.error("User already exists");
+        } else {
+          toast.error(message);
+        }
+        setLoading(false); // Set loading to false if registration fails
       }
+    } else {
+      toast.error("Invalid form data");
+      setLoading(false); // Set loading to false if form data is invalid
     }
   };
 
@@ -131,8 +147,13 @@ const RegisterScreen = () => {
             ></Form.Control>
           </Form.Group>
 
-          <Button type="submit" variant="primary" className="mt-3">
-            Register
+          <Button
+            type="submit"
+            variant="primary"
+            className="mt-3"
+            disabled={loading}
+          >
+            {loading ? "Registering..." : "Register"}{" "}
           </Button>
         </Form>
 

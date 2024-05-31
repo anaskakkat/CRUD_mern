@@ -1,7 +1,7 @@
 //sign up validation -------------------------------------------------------
 
 export const validateSignUpForm = (name, email, password, confirmPassword) => {
-  const isName = name.trim() != "" && name.length > 2;
+  const isName = /^[A-Za-z]+(?:[-' ][A-Za-z]+)*$/.test(name)
   if (!isName) return "Username must be more than 3 charactors";
   const isEmail = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/.test(
     email
